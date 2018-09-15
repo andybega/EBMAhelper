@@ -40,8 +40,14 @@ fitted_ensemble <- ebma(y = presidentialForecast[ ,7],
                         x = presidentialForecast[ ,c(1:6)],
                         model_type = "normal")
 summary(fitted_ensemble)
-#>        Length         Class          Mode 
-#>             1 FDatFitNormal            S4
+#>                 W Constant Predictor rmse  mae
+#> EBMA                                 1.33 1.03
+#> Campbell   0.2685   -0.515     1.001 2.28 1.62
+#> Lewis-Beck 0.0367    2.552     0.954 1.70 1.42
+#> EWT2C2     0.2325    0.124     0.998 2.71 2.05
+#> Fair       0.0000    1.106     0.977 2.21 1.82
+#> Hibbs      0.4624    1.253     0.978 1.89 1.38
+#> Abramowitz 0.0000    1.780     0.966 1.60 1.34
 ```
 
 To do the same with `EBMAforecast` is slightly more verbose and does not follow R's model fitting conventions. The following code is adapted from the package demo:
@@ -70,4 +76,25 @@ summary(thisEnsemble)
 #> Fair       0.000        0         1 2.207 1.755
 #> Hibbs      0.321        0         1 1.523 1.103
 #> Abramowitz 0.221        0         1 1.266 1.055
+```
+
+There is also no standalone method for predicting new cases with a fitted EBMA model in `EBMAforecast`.
+
+Installation
+------------
+
+``` r
+library("devtools")
+
+install_github("andybega/EBMAhelper")
+#> Downloading GitHub repo andybega/EBMAhelper@master
+#> from URL https://api.github.com/repos/andybega/EBMAhelper/zipball/master
+#> Installing EBMAhelper
+#> '/Library/Frameworks/R.framework/Resources/bin/R' --no-site-file  \
+#>   --no-environ --no-save --no-restore --quiet CMD INSTALL  \
+#>   '/private/var/folders/54/f1wx41c56mv074yyp235c9s00000gn/T/RtmpZmqsoX/devtools5bf144a99ece/andybega-EBMAhelper-a37692c'  \
+#>   --library='/Library/Frameworks/R.framework/Versions/3.5/Resources/library'  \
+#>   --install-tests
+#> 
+#> Reloading installed EBMAhelper
 ```
