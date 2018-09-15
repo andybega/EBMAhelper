@@ -2,7 +2,7 @@
 EBMAhelper
 ==========
 
-EBMAhelper is a wrapper around EBMAforecast that uses conventional R model syntax and methods, e.g. implementing `ebma()` to create and EBMA ensemble.
+EBMAhelper is a wrapper around EBMAforecast that uses conventional R model syntax and methods, i.e. implementing `ebma()` to create and EBMA ensemble and a standalong `predict()` method to aggregate new forecasts.
 
 Example
 -------
@@ -87,14 +87,4 @@ Installation
 library("devtools")
 
 install_github("andybega/EBMAhelper")
-#> Downloading GitHub repo andybega/EBMAhelper@master
-#> from URL https://api.github.com/repos/andybega/EBMAhelper/zipball/master
-#> Installing EBMAhelper
-#> '/Library/Frameworks/R.framework/Resources/bin/R' --no-site-file  \
-#>   --no-environ --no-save --no-restore --quiet CMD INSTALL  \
-#>   '/private/var/folders/54/f1wx41c56mv074yyp235c9s00000gn/T/RtmpZmqsoX/devtools5bf144a99ece/andybega-EBMAhelper-a37692c'  \
-#>   --library='/Library/Frameworks/R.framework/Versions/3.5/Resources/library'  \
-#>   --install-tests
-#> 
-#> Reloading installed EBMAhelper
 ```

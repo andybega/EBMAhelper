@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 
 # EBMAhelper
 
-EBMAhelper is a wrapper around EBMAforecast that uses conventional R model syntax and methods, e.g. implementing `ebma()` to create and EBMA ensemble. 
+EBMAhelper is a wrapper around EBMAforecast that uses conventional R model syntax and methods, i.e. implementing `ebma()` to create and EBMA ensemble and a standalong `predict()` method to aggregate new forecasts. 
 
 ## Example
 
@@ -64,7 +64,7 @@ There is also no standalone method for predicting new cases with a fitted EBMA m
 
 ## Installation
 
-```{r installation}
+```{r installation, eval = FALSE}
 library("devtools")
 
 install_github("andybega/EBMAhelper")
