@@ -1,7 +1,7 @@
 
 #' Create an EBMA ensemble
 #'
-#' Wrapper around \code{\link[EBMAforecast]{makeForecastData}} and \code{\link[EBMAforecast]{calibrateEnsemble}}
+#' Wrapper around [EBMAforecast::makeForecastData()] and [EBMAforecast::calibrateEnsemble()].
 #' that mimics R's conventional model syntax.
 #'
 #' @param y Outcome values for training data (calibration).
@@ -9,20 +9,21 @@
 #' @param model_type Model to use, either "normal" or "logit".
 #' @param y_test Test period outcomes.
 #' @param x_test Test period input forecasts.
-#' @param model_name Vector of model names; if \code{NULL}, column names of
-#'     \code{x} are used.
-#' @param \dots Additional arguments for \code{\link[EBMAforecast]{calibrateEnsemble}}
+#' @param model_names Vector of model names; if NULL, column names of
+#'     `x` are used.
+#' @param \dots Additional arguments for [EBMAforecast::calibrateEnsemble()]
 #'
 #' @import EBMAforecast
 #' @export
+#' @md
 ebma <- function(y, x, model_type, y_test = NULL, x_test = NULL, model_names = NULL,
                  ...) {
 
   if (is.null(y_test)) {
-    y_test <- tail(y, 2)
+    y_test <- utils::tail(y, 2)
   }
   if (is.null(x_test)) {
-    x_test <- tail(x, 2)
+    x_test <- utils::tail(x, 2)
   }
   if (is.null(model_names)) {
     model_names <- colnames(x)
@@ -41,41 +42,42 @@ ebma <- function(y, x, model_type, y_test = NULL, x_test = NULL, model_names = N
   out
 }
 
-#' Summary method
-#'
-#' Wrapper for \code{\link[EBMAforecast]{`SummaryForecastData-class`}}
-#'
-#' @param object Fitted "ebma" object.
-#' @param \dots Additional arguments for \code{\link[EBMAforecast]{`SummaryForecastData-class`}}
-#'
+
+
 #' @export
+#' @method summary ebma
 summary.ebma <- function(object, ...) {
   obj <- object[[1]]
   summary(obj, ...)
 }
 
-#' Print method
-#'
-#' Wrapper for EBMAforecast's print method
-#'
-#' @param object Fitted "ebma" object.
-#' @param \dots Additional arguments.
-#'
 #' @export
-print.ebma <- function(object, ...) {
-  obj <- object[[1]]
+#' @method print ebma
+print.ebma <- function(x, ...) {
+  obj <- x[[1]]
   print(obj, ...)
 }
 
 #' #' Calculate ensemble predictions
-#' predict.ebma <- function(object, ...) {
-#'   if (class(object)=="FDatFitLogit") {
-#'     return(predict.ebma.FDatFitLogit(object, ...))
+#' predict.ebma <- function(object, newdata = NULL, ...) {
+#'   orig_obj <- object[[1]]
+#'
+#'   if (is.null(newdata)) {
+#'     # use calibration aka training data
+#'     newdata <- orig_obj@predCalibration[, , ]
+#'     newdata <- newdata[, setdiff(colnames(newdata), "EBMA")]
 #'   }
-#'   if (class(object)=="FDatFitNormal") {
-#'     return(predict.ebma.FDatFitNormal(object, ...))
-#'   }
-#'   stop("Not implemented for class '", class(object), "'")
+#'   nd    <- as.matrix(newdata)
+#'
+#'   preds <- EBMApredict(orig_obj, Predictions = nd)
+#'   preds@predTest[, "EBMA", ]
+#' }
+#'
+#' #' Predict method for logit EBMA
+#' #'
+#' #' Internal
+#' predict.ebma.FDatFitLogit <- function(object, newdata, ...) {
+#'   stop("Not implemented yet.")
 #' }
 
 # Older code that needs to be adapted:

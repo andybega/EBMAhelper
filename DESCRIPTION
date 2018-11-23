@@ -1,15 +1,25 @@
-Package: EBMAhelper
 Type: Package
-Title: Regular S3 model fitting function and methods for EBMAforecast
+Package: EBMAhelper
+Title: Regular S3 model fitting function and methods for
+    EBMAforecast
 Version: 0.1.0
-Authors@R: person("Andreas", "Beger", role = c("aut", "cre"), email =
-    "adbeger@gmail.com", comment = c(ORCID = "0000-0003-1883-3169"))
+Authors@R: 
+    person(given = "Andreas",
+           family = "Beger",
+           role = c("aut", "cre"),
+           email = "adbeger@gmail.com",
+           comment = c(ORCID = "0000-0003-1883-3169"))
 Maintainer: Andreas Beger <adbeger@gmail.com>
-Description: This package adds wrapper functions for EBMAforecast that follow
-    R's convention for model fitting, e.g. with a single ebma() model fitting
-    function and associated predict() method. 
+Description: This package adds wrapper functions for
+    EBMAforecast that follow R's convention for model fitting, e.g. with a
+    single ebma() model fitting function and associated predict()
+    method.
 License: MIT + file LICENSE
+Imports:
+    EBMAforecast
+Suggests: 
+    covr,
+    testthat
 Encoding: UTF-8
 LazyData: true
-Suggests: testthat
-RoxygenNote: 6.1.0
+RoxygenNote: 6.1.1

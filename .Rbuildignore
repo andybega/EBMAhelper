@@ -1,4 +1,8 @@
+^codecov\.yml$
+^\.travis\.yml$
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^README\.Rmd$
 ^README-.*\.png$
+
+scratchpad.R

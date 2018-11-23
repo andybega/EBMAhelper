@@ -2,7 +2,7 @@
 EBMAhelper
 ==========
 
-EBMAhelper is a wrapper around EBMAforecast that uses conventional R model syntax and methods, i.e. implementing `ebma()` to create and EBMA ensemble and a standalong `predict()` method to aggregate new forecasts.
+EBMAhelper is a wrapper around EBMAforecast ([CRAN](https://cran.r-project.org/web/packages/EBMAforecast/index.html), [GitHub](https://github.com/jmontgomery/EBMAforecast)) that uses conventional R model syntax and methods, i.e. implementing `ebma()` to create and EBMA ensemble and a standalone `predict()` (TODO) method to aggregate new forecasts.
 
 Example
 -------
@@ -55,8 +55,8 @@ To do the same with `EBMAforecast` is slightly more verbose and does not follow 
 ``` r
 data("presidentialForecast")
 
-full.forecasts<-presidentialForecast[,c(1:6)]
-full.observed<-presidentialForecast[,7]
+full.forecasts <- presidentialForecast[, c(1:6)]
+full.observed <- presidentialForecast[, 7]
 
 this.ForecastData <- makeForecastData(
   .predCalibration=full.forecasts[1:12,],
@@ -64,9 +64,9 @@ this.ForecastData <- makeForecastData(
   .predTest=full.forecasts[13:15,], 
   .outcomeTest=full.observed[13:15], 
   .modelNames=c("Campbell", "Lewis-Beck","EWT2C2","Fair","Hibbs","Abramowitz"))
-thisEnsemble<-calibrateEnsemble(this.ForecastData, model="normal", 
-                                useModelParams=FALSE, tol = 0.000000001,
-                                const = 0)
+thisEnsemble <- calibrateEnsemble(this.ForecastData, model="normal", 
+                                  useModelParams=FALSE, tol = 0.000000001,
+                                  const = 0)
 summary(thisEnsemble)
 #>                W Constant Predictor  rmse   mae
 #> EBMA                                0.944 0.745
@@ -78,7 +78,7 @@ summary(thisEnsemble)
 #> Abramowitz 0.221        0         1 1.266 1.055
 ```
 
-There is also no standalone method for predicting new cases with a fitted EBMA model in `EBMAforecast`.
+There is also no standalone method for predicting new cases with a fitted EBMA model in `EBMAforecast` (in the works... TODO)
 
 Installation
 ------------

@@ -18,12 +18,12 @@ ebma(y, x, model_type, y_test = NULL, x_test = NULL,
 
 \item{x_test}{Test period input forecasts.}
 
-\item{\dots}{Additional arguments for \code{\link[EBMAforecast]{calibrateEnsemble}}}
-
-\item{model_name}{Vector of model names; if \code{NULL}, column names of
+\item{model_names}{Vector of model names; if NULL, column names of
 \code{x} are used.}
+
+\item{\dots}{Additional arguments for \code{\link[EBMAforecast:calibrateEnsemble]{EBMAforecast::calibrateEnsemble()}}}
 }
 \description{
-Wrapper around \code{\link[EBMAforecast]{makeForecastData}} and \code{\link[EBMAforecast]{calibrateEnsemble}}
+Wrapper around \code{\link[EBMAforecast:makeForecastData]{EBMAforecast::makeForecastData()}} and \code{\link[EBMAforecast:calibrateEnsemble]{EBMAforecast::calibrateEnsemble()}}.
 that mimics R's conventional model syntax.
 }
