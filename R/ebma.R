@@ -58,27 +58,39 @@ print.ebma <- function(x, ...) {
   print(obj, ...)
 }
 
-#' #' Calculate ensemble predictions
-#' predict.ebma <- function(object, newdata = NULL, ...) {
-#'   orig_obj <- object[[1]]
+#' Predict method for EBMA
 #'
-#'   if (is.null(newdata)) {
-#'     # use calibration aka training data
-#'     newdata <- orig_obj@predCalibration[, , ]
-#'     newdata <- newdata[, setdiff(colnames(newdata), "EBMA")]
-#'   }
-#'   nd    <- as.matrix(newdata)
+#' @param object an object of class "ebma"
+#' @param newdata a data frame containing inputs to use for the prediction;
+#'   otherwise predictions are for the validation period (in-sample)
+#' @param \dots not used
 #'
-#'   preds <- EBMApredict(orig_obj, Predictions = nd)
-#'   preds@predTest[, "EBMA", ]
-#' }
+#' @export
+#' @method predict ebma
+predict.ebma <- function(object, newdata = NULL, ...) {
+  orig_obj <- object[[1]]
+
+  if (is.null(newdata)) {
+    # use calibration aka training data
+    newdata <- orig_obj@predCalibration[, , ]
+    newdata <- newdata[, setdiff(colnames(newdata), "EBMA")]
+  }
+  nd    <- as.matrix(newdata)
+
+  preds <- EBMApredict(orig_obj, Predictions = nd)
+  preds@predTest[, "EBMA", ]
+}
+
+#' Replacement for broken predictor
 #'
-#' #' Predict method for logit EBMA
-#' #'
-#' #' Internal
-#' predict.ebma.FDatFitLogit <- function(object, newdata, ...) {
-#'   stop("Not implemented yet.")
-#' }
+#' @param object class "ebma"
+#' @param newdata optional new data
+#' @param \ldots not used
+#'
+#' @keywords internal
+predict_FDatFitLogit <- function(object, newdata, ...) {
+  stop("Not implemented yet.")
+}
 
 # Older code that needs to be adapted:
 #
