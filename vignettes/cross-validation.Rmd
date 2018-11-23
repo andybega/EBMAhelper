@@ -19,7 +19,9 @@ knitr::opts_chunk$set(
 The hypothesis this note will hopefully eventually check is whether cross-validation can reduce overfitting in EBMA. Right now it only demonstrates overfitting for the demo example.
 
 ```{r}
-library("tidyverse")
+library("dplyr")
+library("tidyr")
+library("forcats")
 library("EBMAforecast")
 library("EBMAhelper")
 ```
@@ -93,17 +95,17 @@ Here are the results, ordered from best test RMSE to worse test RMSE.
 # Average RMSE/MAE fit by model
 output %>%
   tidyr::gather(stat, value, rmse:mae) %>%
-  group_by(Model, Period, stat) %>% 
-  summarize(mean = mean(value)) %>% 
-  ungroup() %>%
-  mutate(
-    Period = fct_recode(Period, Calib = "calib", Test = "test"),
+  dplyr::group_by(Model, Period, stat) %>% 
+  dplyr::summarize(mean = mean(value)) %>% 
+  dplyr::ungroup() %>%
+  dplyr::mutate(
+    Period = forcats::fct_recode(Period, Calib = "calib", Test = "test"),
     stat = toupper(stat)
   ) %>%
-  unite(stat, Period, stat) %>%
-  spread(stat, mean) %>%
-  arrange(Test_RMSE) %>%
-  select(Model, ends_with("MAE"), ends_with("RMSE")) %>%
+  tidyr::unite(stat, Period, stat) %>%
+  tidyr::spread(stat, mean) %>%
+  dplyr::arrange(Test_RMSE) %>%
+  dplyr::select(Model, ends_with("MAE"), ends_with("RMSE")) %>%
   knitr::kable(digits = 2)
 ```
 
