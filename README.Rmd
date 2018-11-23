@@ -77,6 +77,5 @@ thisEnsemble <- calibrateEnsemble(this.ForecastData, model="normal",
 summary(thisEnsemble)
 ```
 
-There is also no standalone method for predicting new cases with a fitted EBMA model in `EBMAforecast` (in the works... TODO)
 
 

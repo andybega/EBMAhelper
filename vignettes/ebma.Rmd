@@ -1,0 +1,182 @@
+---
+title: "EBMAhelper"
+author: "Andreas Beger"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+EBMAhelper is a small helper package that wraps EBMAforecast's ensemble-fitting syntax in more R-conventional model fitting syntax. The function `ebma()` will calibrate an EBMA ensemble model, and the resulting oject can then be used with conventional `predict()`, `print()`, and `summary()` methods, unlike in EBMAforecast. 
+
+## Demonstrations with EBMAforecast demo data
+
+For each of the two included demo datasets, we will fit (calibrate) an ensemble model and predict on a set of holdout test data afterwards. 
+
+```{r}
+suppressPackageStartupMessages({
+  library("EBMAforecast")
+  library("EBMAhelper")
+  library("dplyr")
+})
+```
+
+
+### Normal model: presidential forecasts
+
+```{r}
+data(presidentialForecast)
+head(presidentialForecast) %>%
+  knitr::kable(digits = 3)
+```
+
+The data consists of 6 different sets of forecasts for 15 US presidential elections, as well as teh observed (actual) outcome. Next we split out the input forecasts and observed outcome, and hold the last 3 presidential elections back for out-of-sample test.
+
+```{r}
+input_forecasts <- presidentialForecast[, c(1:6)]
+outcome <- presidentialForecast[, 7]
+train_idx <- 1:12
+test_idx  <- 13:15
+model_names <- c("Campbell", "Lewis-Beck","EWT2C2","Fair","Hibbs","Abramowitz")
+```
+
+Fitting a model with EBMAforecast, adapted from the package demo:
+
+```{r}
+this.ForecastData <- makeForecastData(
+  .predCalibration    = input_forecasts[train_idx, ],
+  .outcomeCalibration = outcome[train_idx],
+  .predTest    = input_forecasts[test_idx, ], 
+  .outcomeTest = outcome[test_idx], 
+  .modelNames = model_names)
+
+ebma_fit <- calibrateEnsemble(this.ForecastData, model="normal")
+ebma_fit
+summary(ebma_fit, period = "test")
+```
+
+The test predictions are calculated as part of `calibrateEnsemble`. If we wanted to predict on a different set of data, we can use `EBMApredict` (see `?EBMApredict`):
+
+```{r}
+preds <- EBMApredict(ebma_fit, as.matrix(input_forecasts[test_idx, ]), 
+                     Outcome = outcome[test_idx])
+class(preds)
+preds
+```
+
+The predictions come in a S4 object with class "FDatFitNormal"; the actual predictions for EBMA  are in an array in slot "predTest":
+
+```{r}
+class(preds@predTest)
+# get the EBMA predictions
+preds@predTest[, "EBMA", 1]
+```
+
+Now the equivalent sequence of steps with EBMAhelper. 
+
+```{r}
+ebma_fit_helper <- ebma(y = outcome[train_idx], x = input_forecasts[train_idx, ],
+                        model_type = "normal")
+class(ebma_fit_helper)
+```
+
+The class is different, but this is just a shallow cover; print and summary still work the same. By default `ebma()` will take the "x" column names as model names.
+
+```{r}
+summary(ebma_fit_helper)
+```
+
+Get EBMA predictions for the test period, and make sure they match:
+
+```{r}
+preds_helper <- predict(ebma_fit_helper, newdata = input_forecasts[test_idx, ])
+cbind(
+  EBMAforecast = preds@predTest[, "EBMA", 1],
+  EBMAhelper = preds_helper
+)
+```
+
+If "newdata" is left at the default NULL value, it will return in-sample predictions for the calibration period.
+
+```{r}
+cbind(
+  EBMAforecast = ebma_fit@predCalibration[, "EBMA", 1],
+  EBMAhelper = predict(ebma_fit_helper)
+)
+```
+
+
+### Logit model: insurgency forecasts
+
+The data consist of 3 streams of forecasts for a binary yes/no insurgency indicator. There are 696 rows in total. 
+
+```{r}
+data(calibrationSample)
+calibrationSample <- as.data.frame(calibrationSample)
+head(calibrationSample) %>%
+  knitr::kable(digits = 4)
+```
+
+Keep the last 20% of rows as holdout test sample; split data accordingly.
+
+```{r}
+train_idx <- 1:(ceiling(nrow(calibrationSample)*.8))
+test_idx  <- max(train_idx):nrow(calibrationSample)
+y_col <- 4
+x_col <- 1:3
+train_data <- calibrationSample[train_idx, ]
+test_data  <- calibrationSample[test_idx, ]
+model_names <- c("LMER", "SAE", "GLM")
+```
+
+
+```{r}
+this.ForecastData <- makeForecastData(
+  .predCalibration    = train_data[, x_col],
+  .outcomeCalibration = train_data[, y_col],
+  .predTest    = test_data[, x_col],
+  .outcomeTest = test_data[, y_col],
+  .modelNames = model_names)
+
+ebma_fit <- calibrateEnsemble(this.ForecastData, model="logit")
+summary(ebma_fit)
+```
+
+This errors out right now:
+
+```{r, error=TRUE}
+preds <- EBMApredict(ebma_fit, as.matrix(test_data[, x_col]), 
+                     Outcome = test_data[, y_col])
+preds <- preds@predTest[, "EBMA", 1]
+```
+
+Now with EBMAhelper:
+
+```{r}
+ebma_fit_helper <- ebma(y = train_data[, y_col],
+                        x = train_data[, x_col],
+                        model_type = "logit")
+summary(ebma_fit_helper)
+```
+
+Skip the next part until predict works for logit.
+
+```{r, eval=FALSE}
+preds_helper <- predict(ebma_fit_helper)
+cbind(
+  EBMAforecast = preds,
+  EBMAhelper = preds_helper
+) %>%
+  head() %>%
+  knitr::kable(digits = 3)
+```
+

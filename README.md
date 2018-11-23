@@ -2,7 +2,23 @@
 EBMAhelper
 ==========
 
-EBMAhelper is a wrapper around EBMAforecast ([CRAN](https://cran.r-project.org/web/packages/EBMAforecast/index.html), [GitHub](https://github.com/jmontgomery/EBMAforecast)) that uses conventional R model syntax and methods, i.e. implementing `ebma()` to create and EBMA ensemble and a standalone `predict()` (TODO) method to aggregate new forecasts.
+[![Travis build status](https://travis-ci.org/andybega/EBMAhelper.svg?branch=master)](https://travis-ci.org/andybega/EBMAhelper) [![CRAN status](https://www.r-pkg.org/badges/version/EBMAhelper)](https://cran.r-project.org/package=EBMAhelper) [![Coverage status](https://codecov.io/gh/andybega/EBMAhelper/branch/master/graph/badge.svg)](https://codecov.io/github/andybega/EBMAhelper?branch=master)
+
+EBMAhelper is a wrapper around EBMAforecast ([CRAN](https://cran.r-project.org/web/packages/EBMAforecast/index.html), [GitHub](https://github.com/jmontgomery/EBMAforecast)) that provides some convenience functions more akin to R's conventional model-related functions:
+
+-   `ebma()` to create and fit an EBMA ensemble model; wraps `EBMAforecast::makeForecastData` and `EBMAforecast::calibrateEnsemble`
+-   `predict` method for the class "ebma" object returned by `ebma()`
+
+and a standalone `predict()` (TODO) method to aggregate new forecasts.
+
+Installation
+------------
+
+``` r
+library("devtools")
+
+install_github("andybega/EBMAhelper")
+```
 
 Example
 -------
@@ -76,15 +92,4 @@ summary(thisEnsemble)
 #> Fair       0.000        0         1 2.207 1.755
 #> Hibbs      0.321        0         1 1.523 1.103
 #> Abramowitz 0.221        0         1 1.266 1.055
-```
-
-There is also no standalone method for predicting new cases with a fitted EBMA model in `EBMAforecast` (in the works... TODO)
-
-Installation
-------------
-
-``` r
-library("devtools")
-
-install_github("andybega/EBMAhelper")
 ```
