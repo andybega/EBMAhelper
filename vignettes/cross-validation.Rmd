@@ -3,6 +3,7 @@ title: "EBMA cross-validation"
 author: "Andreas Beger"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
+bibliography: references.bib
 vignette: >
   %\VignetteIndexEntry{Vignette Title}
   %\VignetteEngine{knitr::rmarkdown}
@@ -19,17 +20,29 @@ knitr::opts_chunk$set(
 The hypothesis this note will hopefully eventually check is whether cross-validation can reduce overfitting in EBMA. Right now it only demonstrates overfitting for the demo example.
 
 ```{r}
-library("dplyr")
-library("tidyr")
-library("forcats")
-library("EBMAforecast")
-library("EBMAhelper")
+suppressPackageStartupMessages({
+  library("dplyr")
+  library("tidyr")
+  library("forcats")
+  library("EBMAforecast")
+  library("EBMAhelper")
+})
 ```
 
 
 ## Continuous outcome demo: presidential forecasts
 
-The first demo example consists of forecasts for vote share in US presidential elections. I'm using the demo example here, but will use 3 instead of 1 data point as the holdout test set.
+The canonical **EBMAforecast** package includes two demo data sets that are used to illustrate the performance of EBMA. The first demo example consists of forecasts for vote share in US presidential elections. 
+
+These data consist of 6 different predictions for the incumbent party vote share in 15 US presidential elections, along with the actual vote share.
+
+```{r}
+data(presidentialForecast)
+
+dplyr::glimpse(presidentialForecast)
+```
+
+The original application [@montegomery:etal:2014] uses only 1 case as an out-of-sample test, the 2012 election. I would like to get a more robust estimate of out-of-sample performance, and so I am going to use cross-validation with 3 of the 15 cases left out for testing at each split. To avoid the random element of how splits are assigned, I am going to do with for all 455 distinct^[15 choose 3 = 155] calibration/test splits, and run them all. 
 
 To assess performance, I will look at calibration and test period MAE and RMSE for the component models, EBMA, and a baseline simple average ensemble. Relevant questions:
 
@@ -37,11 +50,8 @@ To assess performance, I will look at calibration and test period MAE and RMSE f
 - Does EBMA perform better than a simple average?
 - Overfitting: how much performance decline is there between calibration and test?
 
-Since there is relatively little data, we can use cross-validation to obtain the performance statistics. With 15 rows total and leaving 3 out, there are 455 distinct calibration/test splits. run them all:
 
 ```{r}
-data(presidentialForecast)
-
 x_data <- presidentialForecast[, c(1:6)]
 y_data <- presidentialForecast[, 7]
 
@@ -60,7 +70,8 @@ for (i in seq_along(all_splits)) {
   # Calibrate EBMA
   ebma_fit <- ebma(y = y_data[train_idx], x = x_data[train_idx, ],
                    model_type = "normal", 
-                   useModelParams = FALSE, tol = 0.0001, const = 0)
+                   useModelParams = FALSE, tol = 0.0001, const = 0,
+                   method = "EM")
   
   # Save calibration/test RMSE/MAE for each model
   df  <- summary(ebma_fit, period="calibration", showCoefs=FALSE)@summaryData
@@ -110,5 +121,7 @@ output %>%
 ```
 
 - EBMA does better than the input models on both MAE and RMSE and in both the calibration and test sets. 
-- A simple average ensemble does better than EBMA, except for head on head in calibration RMSE. 
-- Both the MAE and RMSE are about 0.2 higher for the test set than calibration set. Who nows whether that is a lot of overfitting, but in any case it is enough to push EBMA from "competitive with a simple average" in the in-sample predictions to non-competitive in the out-of-sample test predictions. 
+- If we compare the EBMA calibration and test MAEs, and the same for RMSE, we can see that in both cases the test error is larger, by about 0.2, than in the calibration period. This is overfitting at work. In comparison, the simple average errors are comparable in the calibration and test sets. 
+- As a result, the simple average outperforms the EBMA ensemble in the cross-validated out-of-sample test sets, both on MAE and RMSE.  
+
+## References
