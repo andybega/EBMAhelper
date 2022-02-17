@@ -4,8 +4,7 @@
 \alias{ebma}
 \title{Create an EBMA ensemble}
 \usage{
-ebma(y, x, model_type, y_test = NULL, x_test = NULL,
-  model_names = NULL, ...)
+ebma(y, x, model_type, y_test = NULL, x_test = NULL, model_names = NULL, ...)
 }
 \arguments{
 \item{y}{Outcome values for training data (calibration).}

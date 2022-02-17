@@ -1,6 +1,6 @@
 ---
 title: "EBMA cross-validation"
-author: "Vignette Author"
+author: "Andreas Beger"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >

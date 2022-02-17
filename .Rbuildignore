@@ -6,3 +6,7 @@
 ^README-.*\.png$
 
 scratchpad.R
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
+^\.github$
